@@ -27,10 +27,10 @@ spec:
           securityContext:
             privileged: true
           image: navicore/kafka
-          resources:
-            requests:
-              cpu: "200m"
-              memory: "1500Mi"
+          # resources:
+          #   requests:
+          #     cpu: "200m"
+          #     memory: "1500Mi"
           env:
             - name: JMX_PORT
               value: "9999"
