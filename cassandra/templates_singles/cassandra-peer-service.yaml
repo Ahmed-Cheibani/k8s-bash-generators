@@ -1,0 +1,16 @@
+# Headless service that allows us to get the IP addresses of our Cassandra nodes
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: [CASSANDRA_NAME]-peers
+  name: [CASSANDRA_NAME]-peers
+spec:
+  clusterIP: None
+  ports:
+    - port: 7000
+      name: intra-node-communication
+    - port: 7001
+      name: tls-intra-node-communication
+  selector:
+    name: [CASSANDRA_NAME]

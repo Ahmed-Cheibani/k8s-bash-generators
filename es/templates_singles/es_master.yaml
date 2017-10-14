@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: es-master
+  labels:
+    component: [ENV_NAME]
+    role: master
+spec:
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]
+        role: master
+    spec:
+      nodeSelector:
+        # run the label command to prepare
+        # kubectl label node <SOME NODE> dbNode=[ENV_NAME]
+        dbNode: [ENV_NAME]
+      containers:
+      - name: es-master
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: navicore/es
+        imagePullPolicy: Always
+        env:
+        - name: "CLUSTER_NAME"
+          value: "[ENV_NAME]_es_cluster"
+        - name: NODE_MASTER
+          value: "true"
+        - name: NODE_DATA
+          value: "false"
+        - name: HTTP_ENABLE
+          value: "false"
+        - name: ES_HEAP_SIZE
+          value: "512m"
+        - name: NUMBER_OF_SHARDS
+          value: "4"
+        - name: NUMBER_OF_REPLICAS
+          value: "1"
+        - name: NUMBER_OF_MASTERS
+          value: "2"
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        resources:
+          limits:
+            memory: 1Gi
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+          - emptyDir:
+              medium: ""
+            name: "storage" 
+

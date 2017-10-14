@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: es-client
+  labels:
+    component: [ENV_NAME]
+    role: client
+spec:
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]
+        role: client
+    spec:
+      nodeSelector:
+        # run the label command to prepare
+        # kubectl label node <SOME NODE> dbNode=[ENV_NAME]
+        dbNode: [ENV_NAME]
+      containers:
+      - name: es-client
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: navicore/es
+        env:
+        - name: CLUSTER_NAME
+          value: "[ENV_NAME]_es_cluster"
+        - name: NODE_MASTER
+          value: "false"
+        - name: NODE_DATA
+          value: "false"
+        - name: HTTP_ENABLE
+          value: "true"
+        - name: ES_HEAP_SIZE
+          value: "512m"
+        ports:
+        - containerPort: 9200
+          name: http
+          protocol: TCP
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        resources:
+          limits:
+            memory: 1Gi
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+          - emptyDir:
+              medium: ""
+            name: "storage"
+

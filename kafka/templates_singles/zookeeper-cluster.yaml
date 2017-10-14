@@ -1,0 +1,128 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: [ZOO_PREF]keeper-deployment-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: [ZOO_PREF]keeper-1
+      name: [ZOO_PREF]keeper-1
+  template:
+    metadata:
+      labels:
+        app: [ZOO_PREF]keeper-1
+        name: [ZOO_PREF]keeper-1
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> zookeeperNode=[ZOO_PREF]-zookeeper-1  and 2 and 3
+      #   zookeeperNode: [ZOO_PREF]-zookeeper-1
+      containers:
+      - name: [ZOO_PREF]1
+        securityContext:
+          privileged: true
+        image: navicore/zookeeper:3.4.9
+        ports:
+        - containerPort: 2181
+          name: [ZOO_PREF]keeper
+        - containerPort: 9999
+          name: jmx
+        env:
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: [ZOO_PREF]1
+        - name: ZOOKEEPER_SERVER_2
+          value: [ZOO_PREF]2
+        - name: ZOOKEEPER_SERVER_3
+          value: [ZOO_PREF]3
+        - name: JMX_PORT
+          value: "9999"
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: [ZOO_PREF]keeper-deployment-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: [ZOO_PREF]keeper-2
+      name: [ZOO_PREF]keeper-2
+  template:
+    metadata:
+      labels:
+        app: [ZOO_PREF]keeper-2
+        name: [ZOO_PREF]keeper-2
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> zookeeperNode=[ZOO_PREF]-zookeeper-1  and 2 and 3
+      #   zookeeperNode: [ZOO_PREF]-zookeeper-2
+      containers:
+      - name: [ZOO_PREF]2
+        securityContext:
+          privileged: true
+        image: navicore/zookeeper:3.4.9
+        ports:
+        - containerPort: 2181
+          name: [ZOO_PREF]keeper
+        - containerPort: 9999
+          name: jmx
+        env:
+        - name: ZOOKEEPER_ID
+          value: "2"
+        - name: ZOOKEEPER_SERVER_1
+          value: [ZOO_PREF]1
+        - name: ZOOKEEPER_SERVER_2
+          value: [ZOO_PREF]2
+        - name: ZOOKEEPER_SERVER_3
+          value: [ZOO_PREF]3
+        - name: JMX_PORT
+          value: "9999"
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: [ZOO_PREF]keeper-deployment-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: [ZOO_PREF]keeper-3
+      name: [ZOO_PREF]keeper-3
+  template:
+    metadata:
+      labels:
+        app: [ZOO_PREF]keeper-3
+        name: [ZOO_PREF]keeper-3
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> zookeeperNode=[ZOO_PREF]-zookeeper-1  and 2 and 3
+      #   zookeeperNode: [ZOO_PREF]-zookeeper-3
+      containers:
+      - name: [ZOO_PREF]3
+        securityContext:
+          privileged: true
+        image: navicore/zookeeper:3.4.9
+        ports:
+        - containerPort: 2181
+          name: [ZOO_PREF]keeper
+        - containerPort: 9999
+          name: jmx
+        env:
+        - name: ZOOKEEPER_ID
+          value: "3"
+        - name: ZOOKEEPER_SERVER_1
+          value: [ZOO_PREF]1
+        - name: ZOOKEEPER_SERVER_2
+          value: [ZOO_PREF]2
+        - name: ZOOKEEPER_SERVER_3
+          value: [ZOO_PREF]3
+        - name: JMX_PORT
+          value: "9999"
+

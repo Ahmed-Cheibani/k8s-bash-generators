@@ -1,0 +1,45 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: [ENV_NAME]-worker-controller-[NODE_ID]
+spec:
+  replicas: 1
+  selector:
+    component: [ENV_NAME]-worker-[NODE_ID]
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]-worker-[NODE_ID]
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> sparkNode=[ENV_NAME]-[NODE_ID]
+      #   sparkNode: [ENV_NAME]-[NODE_ID]
+      containers:
+        - name: [ENV_NAME]-worker-[NODE_ID]
+          image: navicore/spark
+          env:
+          - name: SPARK_WORKER_OPTS
+            value: "-Dspark.worker.cleanup.enabled=true -Dspark.worker.cleanup.appDataTtl=172800"
+          - name: SPARK_WORKER_UI_PORT
+            value: "8081"
+          - name: SPARK_EXECUTOR_MEMORY
+            value: "[MEM_SIZE]"
+          - name: SPARK_SERVICE_NAME
+            value: "[ENV_NAME]-master"
+          command: ["/start-worker"]
+          ports:
+            - containerPort: 8081
+          resources:
+            requests:
+              cpu: 100m
+          volumeMounts:
+            - mountPath: /opt/spark/work/
+              name: work
+      volumes:
+        - name: work
+          emptyDir: {}
+          # hostPath:
+          #   # directory location on host
+          #   path: /mnt/[ENV_NAME]-worker-[NODE_ID]
+          #

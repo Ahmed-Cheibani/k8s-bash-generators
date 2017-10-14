@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: [CASSANDRA_NAME]-[NODE_ID]-v1
+  labels:
+    name: [CASSANDRA_NAME]-[NODE_ID]
+spec:
+  replicas: 1
+  selector:
+    name: [CASSANDRA_NAME]
+    version: v1
+  template:
+    metadata:
+      labels:
+        name: [CASSANDRA_NAME]
+        service: [CASSANDRA_NAME]
+        version: v1
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> dbNode=[CASSANDRA_NAME]-[NODE_ID]
+      #   dbNode: [CASSANDRA_NAME]-[NODE_ID]
+      containers:
+        - image: navicore/cassandra
+          name: [CASSANDRA_NAME]
+          securityContext:
+            privileged: true
+          env:
+            - name: PEER_DISCOVERY_SERVICE
+              value: [CASSANDRA_NAME]-peers
+
+            # Feel free to change the following:
+            - name: CASSANDRA_CLUSTER_NAME
+              value: [CASSANDRA_NAME]
+            - name: DEPLOY_ENV
+              value: [DEPLOY_ENV]
+            - name: CASSANDRA_DC
+              value: DC1
+            - name: CASSANDRA_RACK
+              value: Kubernetes Cluster
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: GossipingPropertyFileSnitch
+          ports:
+            - containerPort: 9042
+              name: cql
+          volumeMounts:
+            - mountPath: /var/lib/cassandra
+              name: data
+      volumes:
+        - name: data
+          emptyDir: {}
+          # hostPath:
+          #   path: /mnt/[CASSANDRA_NAME]-[NODE_ID]/data
+          #

@@ -1,0 +1,34 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: [ENV_NAME]-ui-proxy-controller
+spec:
+  replicas: 1
+  selector:
+    component: [ENV_NAME]-ui-proxy
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]-ui-proxy
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> sparkNode=[ENV_NAME]-1
+      #   sparkNode: [ENV_NAME]-1
+      containers:
+        - name: [ENV_NAME]-ui-proxy
+          image: navicore/spark-ui-proxy
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+          args:
+            - [ENV_NAME]-master:8080
+          livenessProbe:
+              httpGet:
+                path: /
+                port: 80
+              initialDelaySeconds: 120
+              timeoutSeconds: 5
+

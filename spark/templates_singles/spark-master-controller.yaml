@@ -1,0 +1,31 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: [ENV_NAME]-master-controller
+spec:
+  replicas: 1
+  selector:
+    component: [ENV_NAME]-master
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]-master
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> sparkNode=[ENV_NAME]-1
+      #   sparkNode: [ENV_NAME]-1
+      containers:
+        - name: [ENV_NAME]-master
+          image: navicore/spark
+          env:
+          - name: SPARK_SERVICE_NAME
+            value: "[ENV_NAME]-master"
+          command: ["/start-master"]
+          ports:
+            - containerPort: 7077
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+

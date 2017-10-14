@@ -1,0 +1,34 @@
+kind: ReplicationController
+apiVersion: v1
+metadata:
+  name: [ZOO_PREF]-kafka-offset-monitor-controller-v1
+spec:
+  replicas: 1
+  selector:
+    component: [ZOO_PREF]-kafka-offset-monitor
+    version: v1
+  template:
+    metadata:
+      labels:
+        component: [ZOO_PREF]-kafka-offset-monitor
+        version: v1
+    spec:
+      # nodeSelector:
+      #   # run the label command to prepare
+      #   # kubectl label node <SOME NODE> brokerNode=kafka-[ENV_NAME]-1
+      #   brokerNode: kafka-[ENV_NAME]-1
+      containers:
+        - name: [ZOO_PREF]-kafka-offset-monitor
+          image: navicore/kafka-offset-monitor
+          env:
+            - name: ZK_HOSTS
+              value: "[ZOO_PREF]1:2181,[ZOO_PREF]2:2181,[ZOO_PREF]3:2181"
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+

@@ -1,0 +1,57 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: es-data
+  labels:
+    component: [ENV_NAME]
+    role: data
+spec:
+  template:
+    metadata:
+      labels:
+        component: [ENV_NAME]
+        role: data
+    spec:
+      nodeSelector:
+        # run the label command to prepare
+        # kubectl label node <SOME NODE> dbNode=[ENV_NAME]
+        dbNode: [ENV_NAME]
+      containers:
+      - name: es-data
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - IPC_LOCK
+        image: navicore/es
+        env:
+        - name: "CLUSTER_NAME"
+          value: "[ENV_NAME]_es_cluster"
+        - name: NODE_MASTER
+          value: "false"
+        - name: NODE_DATA
+          value: "true"
+        - name: HTTP_ENABLE
+          value: "false"
+        - name: ES_HEAP_SIZE
+          value: "1g"
+        - name: NUMBER_OF_SHARDS
+          value: "4"
+        - name: NUMBER_OF_REPLICAS
+          value: "1"
+        ports:
+        - containerPort: 9300
+          name: transport
+          protocol: TCP
+        resources:
+          limits:
+            memory: 2Gi
+        volumeMounts:
+        - name: storage
+          mountPath: /data
+      volumes:
+        - name: storage
+          emptyDir: {}
+          # hostPath:
+          #   path: /mnt/[ENV_NAME]/data
+          #

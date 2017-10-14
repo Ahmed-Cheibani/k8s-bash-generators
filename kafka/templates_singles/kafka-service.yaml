@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-[ENV_NAME]
+  labels:
+    name: kafka-[ENV_NAME]
+    service: kafka-[ENV_NAME]
+spec:
+  ports:
+    - name: broker
+      port: 9092
+    - name: jmx
+      port: 9999
+  selector:
+    service: kafka-[ENV_NAME]
+
